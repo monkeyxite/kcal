@@ -101,9 +101,9 @@ case .tasks(let dated, _):
 
     var filtered = filterReminders(results, args: args)
     switch dated {
-    case true:  filtered = filtered.filter { $0.dueDateComponents != nil }
-    case false: filtered = filtered.filter { $0.dueDateComponents == nil }
-    case nil:   break
+    case .some(true):  filtered = filtered.filter { $0.dueDateComponents != nil }
+    case .some(false): filtered = filtered.filter { $0.dueDateComponents == nil }
+    case .none:        break
     }
     if let l = args.limit { filtered = Array(filtered.prefix(l)) }
     output(filtered.map(reminderToDict))
