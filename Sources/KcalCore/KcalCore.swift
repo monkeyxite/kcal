@@ -266,26 +266,29 @@ public func formatISO(_ date: Date?) -> String {
     return fmt.string(from: date)
 }
 
+/// Strip Windows-style carriage returns from calendar data.
+private func clean(_ s: String?) -> String { (s ?? "").replacingOccurrences(of: "\r", with: "") }
+
 /// Serialise an `EKEvent` to a dictionary.
 ///
 /// Fields: title, datetime, sctime, ectime, start_date, end_date,
 /// attendees, notes, url, conference_url_detected, location, calendar, all_day
 public func eventToDict(_ event: EKEvent) -> [String: Any] {
-    let attendees = (event.attendees ?? []).compactMap { $0.name }
-    let urlStr = event.url?.absoluteString ?? ""
+    let attendees = (event.attendees ?? []).compactMap { $0.name }.map { clean($0) }
+    let urlStr = clean(event.url?.absoluteString)
     return [
-        "title":                    event.title ?? "",
+        "title":                    clean(event.title),
         "datetime":                 formatISO(event.startDate),
         "sctime":                   formatISO(event.startDate),
         "ectime":                   formatISO(event.endDate),
         "start_date":               event.startDate.timeIntervalSince1970,
         "end_date":                 (event.endDate ?? event.startDate).timeIntervalSince1970,
         "attendees":                attendees,
-        "notes":                    event.notes ?? "",
+        "notes":                    clean(event.notes),
         "url":                      urlStr,
         "conference_url_detected":  urlStr,
-        "location":                 event.location ?? "",
-        "calendar":                 event.calendar?.title ?? "",
+        "location":                 clean(event.location),
+        "calendar":                 clean(event.calendar?.title),
         "all_day":                  event.isAllDay,
     ]
 }
@@ -316,9 +319,9 @@ public func reminderToDict(_ r: EKReminder) -> [String: Any] {
         due = formatISO(d); dueTs = d.timeIntervalSince1970
     }
     return [
-        "title":     r.title ?? "",
-        "notes":     r.notes ?? "",
-        "calendar":  r.calendar?.title ?? "",
+        "title":     clean(r.title),
+        "notes":     clean(r.notes),
+        "calendar":  clean(r.calendar?.title),
         "completed": r.isCompleted,
         "due":       due,
         "due_date":  dueTs,
