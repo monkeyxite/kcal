@@ -5,7 +5,9 @@ let package = Package(
     name: "kcal",
     platforms: [.macOS(.v14)],
     targets: [
-        .executableTarget(name: "kcal"),
+        .executableTarget(name: "kcal", dependencies: ["KcalCore"]),
+        .target(name: "KcalCore"),
+        .testTarget(name: "kcalTests", dependencies: ["KcalCore"]),
     ],
     swiftLanguageModes: [.v5]
 )
