@@ -263,6 +263,7 @@ public func formatISO(_ date: Date?) -> String {
     guard let date else { return "" }
     let fmt = ISO8601DateFormatter()
     fmt.formatOptions = [.withFullDate, .withTime, .withColonSeparatorInTime, .withSpaceBetweenDateAndTime]
+    fmt.timeZone = TimeZone.current
     return fmt.string(from: date)
 }
 
